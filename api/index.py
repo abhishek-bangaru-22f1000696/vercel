@@ -1,30 +1,21 @@
 import json
-import os
 
 def handler(request, response):
-    try:
-        # Load student data from file
-        json_path = os.path.join(os.path.dirname(__file__), '..', 'q-vercel-python.json')
+    # Sample hardcoded list (replace with import or file read if needed)
+    students = [{"name":"7x0sBX1UFP","marks":87},{"name":"8c0t","marks":88},{"name":"xHcc","marks":12},{"name":"tz9","marks":70},{"name":"GBMloq","marks":87},{"name":"j","marks":43},{"name":"5","marks":79},{"name":"wKvo","marks":77},{"name":"kl","marks":5},{"name":"IAlUY9u","marks":51},{"name":"Q","marks":25},{"name":"S","marks":16},{"name":"29dyIt","marks":98},{"name":"H","marks":46},{"name":"WL8HND74wE","marks":18},{"name":"tX","marks":10},{"name":"lhI1pgFx","marks":25},{"name":"SINoYCX","marks":39},{"name":"vF","marks":34},{"name":"5wVXf8M7d","marks":54},{"name":"guN2QPD8","marks":49},{"name":"p2HuD2","marks":63},{"name":"B8tnB","marks":32},{"name":"KA","marks":31},{"name":"9kP6NBX","marks":81},{"name":"ITN3RgxjsL","marks":80},{"name":"qLmxxbrau","marks":5},{"name":"7C4Sw","marks":7},{"name":"7gzRgaYZK","marks":86},{"name":"g3CFUq","marks":66},{"name":"fWRuVojBn","marks":31},{"name":"ZDIOOSE","marks":13},{"name":"IRtq8Igrdb","marks":70},{"name":"suP","marks":88},{"name":"sGEc","marks":21},{"name":"HFUReMZr","marks":53},{"name":"OThW4","marks":89},{"name":"UsW","marks":56},{"name":"5TBQVOJ59J","marks":23},{"name":"doXrW0","marks":20},{"name":"ivRFg","marks":96},{"name":"UJyR","marks":15},{"name":"ccM","marks":46},{"name":"uxjK","marks":12},{"name":"m0iZ","marks":99},{"name":"DddpeVqkYA","marks":99},{"name":"Ci2Chll","marks":18},{"name":"vhuKEmoa","marks":87},{"name":"80YrKPfy","marks":5},{"name":"8MnT","marks":27},{"name":"JhU","marks":55},{"name":"QBkSB7UGws","marks":26},{"name":"983FuuZA","marks":81},{"name":"Sjz","marks":58},{"name":"XnmEfc","marks":85},{"name":"svVA","marks":18},{"name":"D","marks":38},{"name":"uyV4J0","marks":87},{"name":"y3Va69","marks":59},{"name":"QRsVI","marks":32},{"name":"pv4z3","marks":7},{"name":"4aMTc","marks":10},{"name":"ysy","marks":4},{"name":"x","marks":34},{"name":"JZkwSSNQP","marks":52},{"name":"NaJyX63","marks":58},{"name":"39ytVK","marks":1},{"name":"eLlS3","marks":21},{"name":"ZvZ9fQ","marks":69},{"name":"hFIMo","marks":63},{"name":"IxRJ6u","marks":40},{"name":"yd","marks":78},{"name":"lbnW","marks":26},{"name":"t4i4Voo2yF","marks":21},{"name":"r7glhY","marks":26},{"name":"TYO","marks":44},{"name":"iW","marks":34},{"name":"13Qt","marks":34},{"name":"oXrgykw","marks":48},{"name":"gnKf0K2gD","marks":89},{"name":"QesIHiz","marks":67},{"name":"45MBOcdS5t","marks":60},{"name":"eFOh","marks":10},{"name":"T69x2J","marks":64},{"name":"F98","marks":14},{"name":"Y3I","marks":31},{"name":"n1JMFh","marks":21},{"name":"XGvOFKar30","marks":37},{"name":"Egavdv","marks":44},{"name":"DNB2y6yV4e","marks":96},{"name":"yeKKJwKoDM","marks":9},{"name":"nLFa","marks":38},{"name":"oVsU","marks":92},{"name":"ZVBXO","marks":84},{"name":"gK3y69YI","marks":77},{"name":"0i70QRf6U","marks":28},{"name":"F","marks":55},{"name":"blBFbT","marks":52},{"name":"aQlE","marks":19},{"name":"ksXtw","marks":36}]
 
-        with open(json_path, 'r') as f:
-            students = json.load(f)
+    # Convert to dictionary for fast lookup
+    student_dict = {student["name"]: student["marks"] for student in students}
 
-        # Create a dictionary for fast lookup
-        student_dict = {student["name"]: student["marks"] for student in students}
+    # Get ?name=... query parameters
+    names = request.query.get("name")
+    if not names:
+        return response.status(400).json({"error": "Missing 'name' query parameter"})
 
-        # Parse query parameters
-        names = request.query.get("name")
-        if not names:
-            return response.json({"error": "No name provided"}, status=400)
+    # If it's a single name (not a list), convert to list
+    if isinstance(names, str):
+        names = [names]
 
-        if isinstance(names, str):
-            names = [names]  # support single name as well
-
-        result = []
-        for name in names:
-            result.append({name: student_dict.get(name, None)})
-
-        return response.json(result)
-
-    except Exception as e:
-        return response.json({"error": str(e)}, status=500)
+    # Return marks for each name
+    result = [{name: student_dict.get(name)} for name in names]
+    return response.status(200).json(result)
