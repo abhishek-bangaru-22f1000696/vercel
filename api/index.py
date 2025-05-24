@@ -4,11 +4,13 @@ import os
 def handler(request, response):
     try:
         # Load student data from file
-        with open(os.path.join(os.path.dirname(__file__), "../q-vercel-python.json.json")) as f:
-            data = json.load(f)
+        json_path = os.path.join(os.path.dirname(__file__), '..', 'q-vercel-python.json')
+
+        with open(json_path, 'r') as f:
+            students = json.load(f)
 
         # Create a dictionary for fast lookup
-        student_dict = {student["name"]: student["marks"] for student in data}
+        student_dict = {student["name"]: student["marks"] for student in students}
 
         # Parse query parameters
         names = request.query.get("name")
